@@ -1,0 +1,161 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Color Palette Generator" description="Generate curated palettes from an AI prompt.">
+    <div class="max-w-[1400px] mx-auto px-8 py-16">
+        <header id="header" class="mb-20 text-center">
+            <h1 class="text-4xl font-bold mb-3" style="color: var(--text-color);">Color Palette Generator</h1>
+            <p class="text-lg" style="color: var(--subtext-color);">Generate curated palettes from an AI prompt.</p>
+        </header>
+
+        <main class="flex flex-col items-center">
+            <section id="prompt-input-section" class="w-full max-w-[700px] mb-12">
+                <label for="palettePrompt" class="block text-base font-medium mb-3" style="color: var(--text-color);">Describe your palette</label>
+                <input 
+                    type="text" 
+                    id="palettePrompt" 
+                    placeholder="e.g., futuristic neon blues with soft purples"
+                    class="w-full px-5 py-5 text-base rounded-[18px] outline-none transition-all focus:ring-2 focus:ring-opacity-50"
+                    style="background-color: var(--secondary-color); color: var(--text-color); border: none;"
+                />
+                <p class="text-sm mt-3" style="color: var(--subtext-color);">The AI will generate 5–8 colors.</p>
+            </section>
+
+            <section id="generate-button" class="w-full max-w-[700px] mb-20">
+                <button 
+                    id="generateBtn"
+                    class="w-full h-[54px] rounded-[18px] font-semibold text-base transition-all hover:scale-[1.02] glow-hover"
+                    style="background-color: var(--primary-color); color: white;"
+                >
+                    Generate Palette
+                </button>
+            </section>
+
+            <section id="palette-display-section" class="w-full max-w-[1100px]" style="display: none;">
+                <h2 id="paletteTitle" class="text-2xl font-bold mb-6 pl-1" style="color: var(--text-color);">Generated Palette</h2>
+                <div id="paletteGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Palette cards will be injected here -->
+                </div>
+            </section>
+        </main>
+
+        <footer id="footer" class="text-center mt-24">
+            <!-- <p class="text-sm" style="color: var(--subtext-color);">Built with AI-powered color generation.</p> -->
+        </footer>
+    </div>
+
+    <script>
+        window.addEventListener('load', function() {
+            const input = document.getElementById('palettePrompt') as HTMLInputElement | null;
+            const generateBtn = document.getElementById('generateBtn') as HTMLButtonElement | null;
+            const paletteTitle = document.getElementById('paletteTitle') as HTMLHeadingElement | null;
+            const paletteGrid = document.getElementById('paletteGrid') as HTMLDivElement | null;
+            const paletteSection = document.getElementById('palette-display-section') as HTMLElement | null;
+
+            if (!input || !generateBtn || !paletteTitle || !paletteGrid || !paletteSection) return;
+
+            function renderPalette(palette: Array<{ role: string; hex: string }>) {
+                if (!paletteGrid) return;
+                paletteGrid.innerHTML = '';
+                palette.forEach((color: { role: string; hex: string }, index: number) => {
+                    const card = document.createElement('div');
+                    card.className = 'fade-in';
+                    card.style.animationDelay = `${index * 50}ms`;
+                    card.innerHTML = `
+                        <div class="p-4 rounded-[14px] flex flex-col items-center text-center transition-all hover:scale-[1.03] group" style="background-color: var(--secondary-color); border: 1px solid rgba(255,255,255,0.05);">
+                            <div class="w-full aspect-[1.5] rounded-[8px] mb-4 shadow-lg group-hover:shadow-xl transition-shadow" style="background-color: ${color.hex};"></div>
+                            <p class="text-sm font-bold mb-1" style="color: var(--text-color);">${color.role}</p>
+                            <p class="text-xs font-mono uppercase opacity-80" style="color: var(--subtext-color);">${color.hex}</p>
+                        </div>
+                    `;
+                    if (paletteGrid) paletteGrid.appendChild(card);
+                });
+                
+                // Show the palette section
+                if (paletteSection) {
+                    paletteSection.style.display = 'block';
+                }
+            }
+
+            input.addEventListener('input', function() {
+                // Optional: visual feedback on input
+            });
+
+            generateBtn.addEventListener('click', async function() {
+                const prompt = input.value.trim();
+                if (prompt === '') return;
+
+                // Set loading state
+                generateBtn.textContent = 'Generating...';
+                generateBtn.disabled = true;
+                
+                try {
+                    // Call the API endpoint
+                    const response = await fetch('/api/generate-palette', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ prompt }),
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Failed to generate palette');
+                    }
+
+                    const data = await response.json();
+                    
+                    // Render the generated palette
+                    renderPalette(data.colors);
+                    
+                } catch (error) {
+                    console.error('Error generating palette:', error);
+                    alert(error instanceof Error ? error.message : 'Failed to generate palette. Please try again.');
+                } finally {
+                    // Restore button state
+                    generateBtn.textContent = 'Generate Palette';
+                    generateBtn.disabled = false;
+                }
+            });
+        });
+    </script>
+</Layout>
+
+<style>
+    :root {
+        --bg-color: #0a0a0f;
+        --secondary-color: #1a1a24;
+        --surface-color: #24242e;
+        --primary-color: #6366f1;
+        --accent-color: #818cf8;
+        --text-color: #e4e4e7;
+        --subtext-color: #a1a1aa;
+    }
+    
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        min-height: 100vh;
+    }
+    
+    .fade-in {
+        animation: fadeInUp 0.2s ease-out forwards;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .glow-hover:hover {
+        box-shadow: 0 0 24px rgba(99, 102, 241, 0.4);
+    }
+</style>
