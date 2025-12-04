@@ -1,46 +1,13 @@
-# Astro Starter Kit: Basics
+A simple Astro project to help you use AI to generate color palettes.
 
-```sh
-npm create astro@latest -- --template basics
-```
+Ensure to create a .env file for the Open Router API Key. Use "OPENROUTER_API_KEY=" and paste your key after the "=" sign.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Feel free to take it & make it your own!
 
-## 🚀 Project Structure
+## 📸 Screenshot
 
-Inside of your Astro project, you'll see the following folders and files:
+<p float="left">
+  <img src="https://i.imgur.com/7sghA4F.png" width="250" />
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+</p>
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
